@@ -1,0 +1,31 @@
+CREATE DATABASE AfroConnection;
+
+USE AfroConnection;
+
+CREATE TABLE usuario (
+    id_usuario VARCHAR(20) PRIMARY KEY,
+    nome VARCHAR(50),
+    username VARCHAR(15),
+    email VARCHAR(50),
+    senha VARCHAR(255),
+    data_criacao DATETIME,
+    ultimo_login DATETIME
+);
+
+CREATE TABLE recuperacao_senha (
+    id_recuperacao VARCHAR(40) PRIMARY KEY,
+    token_recuperacao VARCHAR(100),
+    data_solicitacao DATETIME,
+    data_expiracao DATETIME,
+    id_usuario VARCHAR(20),
+    FOREIGN KEY (id_usuario) REFERENCES usuario(id_usuario)
+);
+
+CREATE TABLE sessao (
+    id_sessao VARCHAR(40) PRIMARY KEY,
+    token VARCHAR(100),
+    data_inicio DATETIME,
+    data_expiracao DATETIME,
+    id_usuario VARCHAR(20),
+    FOREIGN KEY (id_usuario) REFERENCES usuario(id_usuario)
+);
