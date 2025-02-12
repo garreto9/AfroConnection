@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - AfroConnection</title>
+    <link rel="icon" type="image/x-icon" href="../images/logo.png">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="../styles.css" rel="stylesheet">
+</head>
+<body class="login-page">
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container">
+            <a class="navbar-brand" href="../index.html"><img src="../images/logo.png" alt="Logo AfroConnection" class="logo"> AfroConnection</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="../index.html"><i class="bi bi-house-door me-1"></i>Início</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="cultura.html"><i class="bi bi-book me-1"></i>Cultura</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="capacitacoes.html"><i class="bi bi-mortarboard me-1"></i>Capacitações</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="oportunidades.html"><i class="bi bi-briefcase me-1"></i>Oportunidades</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="bem-estar.html"><i class="bi bi-heart me-1"></i>Bem-estar Mental</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Login/Signup -->
+    <section class="login-section">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-md-10 col-lg-8 col-xl-6">
+                    <div class="login-card">
+                        <div class="text-center mb-4">
+                            <h2 class="fw-bold text-primary mb-2">Bem-vindo à AfroConnection</h2>
+                            <p class="text-muted">Entre ou crie sua conta para começar</p>
+                        </div>
+
+                        <!-- Tabs -->
+                        <ul class="nav nav-pills nav-auth mb-4" id="loginTabs" role="tablist">
+                            <li class="nav-item flex-grow-1" role="presentation">
+                                <button class="nav-link active w-100" id="login-tab" data-bs-toggle="pill" data-bs-target="#login" type="button" role="tab">Login</button>
+                            </li>
+                            <li class="nav-item flex-grow-1" role="presentation">
+                                <button class="nav-link w-100" id="signup-tab" data-bs-toggle="pill" data-bs-target="#signup" type="button" role="tab">Criar Conta</button>
+                            </li>
+                        </ul>
+
+                        <!-- Conteúdo da Guia -->
+                        <div class="tab-content" id="loginTabsContent">
+                            <!-- Formulário do Login -->
+                            <div class="tab-pane fade show active" id="login" role="tabpanel">
+                                <form class="needs-validation" novalidate>
+                                    <div class="form-floating mb-4">
+                                        <input type="email" class="form-control" id="loginEmail" placeholder="nome@exemplo.com" required>
+                                        <label for="loginEmail">Email</label>
+                                        <div class="invalid-feedback">
+                                            Por favor, insira um email válido.
+                                        </div>
+                                    </div>
+                                    <div class="form-floating mb-4">
+                                        <input type="password" class="form-control" id="loginPassword" placeholder="Senha" required>
+                                        <label for="loginPassword">Senha</label>
+                                        <div class="invalid-feedback">
+                                            Por favor, insira sua senha.
+                                        </div>
+                                    </div>
+                                    <div class="d-flex justify-content-between align-items-center mb-4">
+                                        <div class="form-check">
+                                            <input type="checkbox" class="form-check-input" id="rememberMe">
+                                            <label class="form-check-label" for="rememberMe">Lembrar-me</label>
+                                        </div>
+                                        <a href="#" class="text-decoration-none text-primary">Esqueceu sua senha?</a>
+                                    </div>
+                                    <button type="submit" class="btn btn-primary w-100 btn-lg mb-3">Entrar</button>
+                                </form>
+                            </div>
+
+                            <!-- Formulário Criar Conta -->
+                            <div class="tab-pane fade" id="signup" role="tabpanel">
+                                <form class="needs-validation" novalidate>
+                                    <div class="row">
+                                        <div class="col-md-6 mb-4">
+                                            <div class="form-floating">
+                                                <input type="text" class="form-control" id="firstName" placeholder="Nome" required>
+                                                <label for="firstName">Nome</label>
+                                                <div class="invalid-feedback">
+                                                    Por favor, insira seu nome.
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6 mb-4">
+                                            <div class="form-floating">
+                                                <input type="text" class="form-control" id="lastName" placeholder="Sobrenome" required>
+                                                <label for="lastName">Sobrenome</label>
+                                                <div class="invalid-feedback">
+                                                    Por favor, insira seu sobrenome.
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-floating mb-4">
+                                        <input type="email" class="form-control" id="signupEmail" placeholder="nome@exemplo.com" required>
+                                        <label for="signupEmail">Email</label>
+                                        <div class="invalid-feedback">
+                                            Por favor, insira um email válido.
+                                        </div>
+                                    </div>
+                                    <div class="form-floating mb-4">
+                                        <input type="password" class="form-control" id="signupPassword" placeholder="Senha" required>
+                                        <label for="signupPassword">Senha</label>
+                                        <div class="invalid-feedback">
+                                            Por favor, crie uma senha.
+                                        </div>
+                                    </div>
+                                    <div class="form-floating mb-4">
+                                        <input type="password" class="form-control" id="confirmPassword" placeholder="Confirmar Senha" required>
+                                        <label for="confirmPassword">Confirmar Senha</label>
+                                        <div class="invalid-feedback">
+                                            As senhas não coincidem.
+                                        </div>
+                                    </div>
+                                    <div class="form-check mb-4">
+                                        <input type="checkbox" class="form-check-input" id="termsAccept" required>
+                                        <label class="form-check-label" for="termsAccept">
+                                            Eu aceito os <a href="#" class="text-decoration-none">Termos de Uso</a> e a <a href="#" class="text-decoration-none">Política de Privacidade</a>
+                                        </label>
+                                        <div class="invalid-feedback">
+                                            Você deve aceitar os termos para continuar.
+                                        </div>
+                                    </div>
+                                    <button type="submit" class="btn btn-primary w-100 btn-lg">Criar Conta</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="py-4">
+        <div class="container text-center">
+            <p class="mb-3">© 2025 AfroConnection. Todos os direitos reservados.</p>
+            <div class="footer-links">
+                <a href="sobre.html">Sobre</a>
+                <a href="#">Contato</a>
+                <a href="#">Privacidade</a>
+                <a href="#">Termos</a>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Validação do Formulário
+        (function () {
+            'use strict'
+
+            // Busca Formulários para validação
+            var forms = document.querySelectorAll('.needs-validation')
+
+            // Evento para previnir envio de formulário inválido
+            Array.prototype.slice.call(forms)
+                .forEach(function (form) {
+                    form.addEventListener('submit', function (event) {
+                        if (!form.checkValidity()) {
+                            event.preventDefault()
+                            event.stopPropagation()
+                        }
+
+                        form.classList.add('was-validated')
+                    }, false)
+                })
+
+            // Validação de Confirmação da Senha
+            var password = document.getElementById("signupPassword")
+            var confirm_password = document.getElementById("confirmPassword");
+
+            function validatePassword(){
+                if(password.value != confirm_password.value) {
+                    confirm_password.setCustomValidity("As senhas não coincidem");
+                } else {
+                    confirm_password.setCustomValidity('');
+                }
+            }
+
+            if(password && confirm_password) {
+                password.onchange = validatePassword;
+                confirm_password.onkeyup = validatePassword;
+            }
+        })()
+    </script>
+</body>
+</html>
