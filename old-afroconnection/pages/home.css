@@ -1,0 +1,154 @@
+/* HomePage.css - Estilos específicos para a página inicial */
+
+/* Variables - Globais, podem ficar em um arquivo separado como 'index.css' */
+:root {
+    --primary: #c2410c;
+    --primary-dark: #9a3412;
+    --primary-light: #fb923c;
+    --bg-light: #fff7ed;
+    --dark: #431407;
+}
+
+/* General Styles - Globais, podem ficar em 'index.css' */
+body {
+    background-color: var(--bg-light);
+    font-family: system-ui, -apple-system, sans-serif;
+}
+
+/* Navbar */
+.navbar {
+    background-color: var(--primary-dark);
+}
+
+.navbar .logo {
+    height: 60px;
+}
+
+.navbar-brand {
+    font-weight: bold;
+    font-size: 1.8rem;
+}
+
+.nav-link i {
+    font-size: 1.3rem;
+}
+
+/* Hero Section */
+.hero {
+    position: relative;
+    background-size: cover;
+    background-position: center;
+    height: 600px;
+}
+
+.hero-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(to right, rgba(122, 45, 18, 0.9), rgba(154, 52, 18, 0.9));
+}
+
+.hero-content {
+    position: relative;
+    z-index: 1;
+    padding: 2rem 0;
+}
+
+/* Features Section */
+.feature-card {
+    background-color: white;
+    padding: 2rem;
+    border-radius: 0.5rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    height: 100%;
+    transition: transform 0.3s ease;
+}
+
+.feature-card:hover {
+    transform: translateY(-5px);
+}
+
+.feature-card i {
+    color: var(--primary);
+}
+
+.feature-card h3 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+}
+
+/* Community Section */
+.community {
+    background-color: var(--primary-dark);
+    color: white;
+}
+
+.stat-card {
+    background-color: rgba(255, 255, 255, 0.1);
+    padding: 2rem;
+    border-radius: 0.5rem;
+}
+
+/* Botão Primário (usado no Hero) */
+.btn-primary {
+    background-color: var(--primary);
+    border-color: var(--primary);
+    border-radius: 50px;
+    padding: 0.75rem 2rem;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.btn-primary:hover {
+    background-color: var(--primary-dark);
+    border-color: var(--primary-dark);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(194, 65, 12, 0.15);
+}
+
+/* Footer */
+footer {
+    background-color: var(--dark);
+    color: white;
+    font-size: 1.2rem;
+}
+
+.footer-links {
+    display: flex;
+    justify-content: center;
+    gap: 1.5rem;
+}
+
+.footer-links a {
+    color: white;
+    text-decoration: none;
+    transition: color 0.3s;
+}
+
+.footer-links a:hover {
+    color: var(--primary-light);
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .hero {
+        height: 500px;
+    }
+    
+    .hero-content {
+        text-align: center;
+        padding: 0 1rem;
+    }
+    
+    .stat-card {
+        margin-bottom: 1rem;
+    }
+
+    footer {
+        font-size: 1rem;
+    }
+}
