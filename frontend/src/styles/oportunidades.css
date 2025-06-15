@@ -1,0 +1,29 @@
+.job-card {
+  transition: all 0.3s ease;
+  border: 1px solid #e2e8f0;
+}
+
+.job-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.1) !important;
+  border-color: var(--primary-light);
+}
+
+.job-card .company, .job-card .location {
+    color: var(--gray-text);
+    font-size: 0.95rem;
+}
+
+.job-card .tags .badge {
+    font-size: 0.75rem;
+    font-weight: 500;
+}
+
+.sidebar .resource-link {
+    color: var(--dark);
+    font-weight: 500;
+}
+
+.sidebar .resource-link:hover {
+    color: var(--primary);
+}
