@@ -3,7 +3,7 @@ services:
   - type: web
     name: afroconnection-backend
     # Define o ambiente como Java
-    env: java
+    runtime: java
     # Diretório raiz
     rootDir: backend
     # Comandos para construir e iniciar a aplicação
