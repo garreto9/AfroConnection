@@ -1,0 +1,22 @@
+services:
+  - type: web
+    name: afroconnection-backend
+    env: java
+    rootDir: backend
+    buildCommand: "./mvnw package -DskipTests"
+    startCommand: "java -jar target/backend-0.0.1-SNAPSHOT.jar"
+    plan: free
+    envVars:
+      - key: JAVA_VERSION
+        value: 17
+      - key: SPRING_DATASOURCE_URL
+        value: jdbc:postgresql://aws-0-sa-east-1.pooler.supabase.com:6543/postgres
+      - key: SPRING_DATASOURCE_USERNAME
+        value: postgres.wxrfjqybudekpzqsukzm
+      - key: SPRING_DATASOURCE_PASSWORD
+        value: AfroConnection-DB
+      
+      - key: JWT_SECRET
+        value: Y1Jvb25lY3Rpb25TZWNyZXRLZXlGb3JBdXRoZW50aWNhdGlvbkFuZEF1dGhvcml6YXRpb24=
+      - key: SPRING_JPA_DATABASE-PLATFORM
+        value: org.hibernate.dialect.PostgreSQLDialect
