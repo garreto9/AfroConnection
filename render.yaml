@@ -1,17 +1,11 @@
 services:
-  # Define serviço de back-end
   - type: web
     name: afroconnection-backend
-    # Define o ambiente como Java
     runtime: java17
-    # Diretório raiz
     rootDir: backend
-    # Comandos para construir e iniciar a aplicação
     buildCommand: "./mvnw package"
     startCommand: "java -jar target/backend-0.0.1-SNAPSHOT.jar"
-    # Configuração do plano gratuito
     plan: free
-    # Variáveis de ambiente para o banco de dados
     envVars:
       - key: SPRING_DATASOURCE_URL
         value: jdbc:postgresql://db.wxrfjqybudekpzqsukzm.supabase.co:5432/postgres
