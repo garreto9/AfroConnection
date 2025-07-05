@@ -1,12 +1,14 @@
 services:
   - type: web
     name: afroconnection-backend
-    runtime: java17
+    runtime: java
     rootDir: backend
     buildCommand: "./mvnw package"
     startCommand: "java -jar target/backend-0.0.1-SNAPSHOT.jar"
     plan: free
     envVars:
+      - key: JAVA_VERSION
+        value: 17
       - key: SPRING_DATASOURCE_URL
         value: jdbc:postgresql://db.wxrfjqybudekpzqsukzm.supabase.co:5432/postgres
       - key: SPRING_DATASOURCE_USERNAME
