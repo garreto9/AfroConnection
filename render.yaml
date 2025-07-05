@@ -1,7 +1,7 @@
 services:
   - type: web
     name: afroconnection-backend
-    env: java
+    runtime: java
     rootDir: backend
     buildCommand: "./mvnw package -DskipTests"
     startCommand: "java -jar target/backend-0.0.1-SNAPSHOT.jar"
