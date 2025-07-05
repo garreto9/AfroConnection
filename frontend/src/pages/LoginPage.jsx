@@ -9,11 +9,13 @@ function LoginPage() {
   const navigate = useNavigate();
   const { login } = useAuth();
 
+  // Estados para os inputs
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
 
+  // Estados para feedback de UX
   const [loading, setLoading] = useState(false);
   const [formErrors, setFormErrors] = useState({});
   const [notification, setNotification] = useState({ message: '', type: '' });
@@ -27,7 +29,6 @@ function LoginPage() {
     setNotification({ message, type });
   };
 
-  // Lógica de Validação para o Cadastro
   const validateSignUp = () => {
     const errors = {};
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -50,18 +51,20 @@ function LoginPage() {
     }
 
     setLoading(true);
-    const result = await login(email, password);
+    const result = await login(email, password); // Chama a função do AuthContext
     setLoading(false);
 
     if (result.success) {
-      navigate('/');
+      navigate('/'); // Redireciona para a home em caso de sucesso
     } else {
+      // Exibe a mensagem de erro retornada pelo contexto (ex: "Email ou senha inválidos.")
       setFormErrors({ general: result.message || 'Ocorreu um erro. Tente novamente.' });
     }
   };
 
   const handleSignUp = async (e) => {
     e.preventDefault();
+    setFormErrors({});
     if (validateSignUp()) {
         setLoading(true);
         try {
