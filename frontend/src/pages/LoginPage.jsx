@@ -68,7 +68,7 @@ function LoginPage() {
     if (validateSignUp()) {
         setLoading(true);
         try {
-            const response = await fetch('http://localhost:8080/api/auth/register', {
+            const response = await fetch(`${API_URL}/api${endpoint}`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ nome: name, email, senha: password })
