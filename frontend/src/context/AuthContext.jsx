@@ -2,6 +2,7 @@ import React, { createContext, useState, useContext, useEffect } from 'react';
 import { jwtDecode } from 'jwt-decode';
 
 const AuthContext = createContext(null);
+const API_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080';
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
@@ -14,7 +15,8 @@ export const AuthProvider = ({ children }) => {
         if (decodedToken.exp * 1000 > Date.now()) {
           setUser({
             name: decodedToken.nome,
-            role: decodedToken.role
+            role: decodedToken.role,
+            profilePicture: `https://placehold.co/40x40/${decodedToken.role === 'admin' ? '9a3412' : 'c2410c'}/FFFFFF?text=${decodedToken.nome.charAt(0)}`
           });
         } else {
           sessionStorage.removeItem('authToken');
@@ -28,7 +30,7 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (email, password) => {
     try {
-      const response = await fetch('http://localhost:8080/api/auth/login', {
+      const response = await fetch(`${API_URL}/api/auth/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

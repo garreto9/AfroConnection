@@ -4,6 +4,8 @@ import { useAuth } from '../context/AuthContext';
 import ToastNotification from '../components/ToastNotification';
 import '../styles/LoginPage.css';
 
+const API_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080';
+
 function LoginPage() {
   const [isSignUp, setIsSignUp] = useState(false);
   const navigate = useNavigate();
@@ -68,7 +70,7 @@ function LoginPage() {
     if (validateSignUp()) {
         setLoading(true);
         try {
-            const response = await fetch(`${API_URL}/api${endpoint}`, {
+            const response = await fetch(`${API_URL}/api/auth/register`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ nome: name, email, senha: password })
