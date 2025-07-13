@@ -1,9 +1,11 @@
 package com.afroconnection.backend.auth;
 
-import java.util.Optional;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -32,11 +34,12 @@ public class AuthController {
     @Autowired
     private JwtService jwtService;
 
+    @Autowired
+    private AuthenticationManager authenticationManager;
+
     @PostMapping("/register")
     public ResponseEntity<String> registerUser(@RequestBody RegistrationRequest request) {
-        //Verifica se o email já existe no banco de dados
         if (userRepository.findByEmail(request.email()).isPresent()) {
-            // Retorna um erro 409 (Conflict) se o email já estiver em uso
             return ResponseEntity.status(409).body("Este email já está em uso.");
         }
 
@@ -47,18 +50,26 @@ public class AuthController {
         return ResponseEntity.ok("Utilizador registado com sucesso!");
     }
 
+    
+    // Endpoint para autenticar um utilizador e retornar um token JWT.
     @PostMapping("/login")
     public ResponseEntity<?> loginUser(@RequestBody LoginRequest request) {
-        Optional<User> userOptional = userRepository.findByEmail(request.email());
+        try {
+            Authentication authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(request.email(), request.senha())
+            );
 
-        if (userOptional.isPresent()) {
-            User user = userOptional.get();
-            if (passwordEncoder.matches(request.senha(), user.getSenha())) {
+            if (authentication.isAuthenticated()) {
+                User user = userRepository.findByEmail(request.email())
+                        .orElseThrow(() -> new UsernameNotFoundException("Erro ao buscar detalhes do utilizador após login."));
+                
                 String token = jwtService.generateToken(user);
                 return ResponseEntity.ok(new AuthResponse(token));
+            } else {
+                return ResponseEntity.status(401).body("Autenticação falhou.");
             }
+        } catch (Exception e) {
+            return ResponseEntity.status(401).body("Email ou senha inválidos.");
         }
-
-        return ResponseEntity.status(401).body("Email ou senha inválidos.");
     }
 }
