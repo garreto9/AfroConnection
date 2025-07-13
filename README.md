@@ -4,7 +4,7 @@ Esse Projeto foi criado com a finalidade de apoiar de várias formas a comunidad
 
 Squad nº 13
 
-Integrantes: Jeffson Garreto (Líder e Vice-Líder) (Único Integrante)
+Integrantes: Jeffson Garreto (Líder e Vice-Líder), Isadora de Leão e Maryelly Faustino.
 
 
 
@@ -33,23 +33,6 @@ Integrantes: Jeffson Garreto (Líder e Vice-Líder) (Único Integrante)
 7. Qual a ferramenta de gerenciamento de projeto será usada para o monitoramento das atividades? Ex: Trello, Asana, Jira, Monday. 
    - Papel e caneta.
 
-
-## Como Rodar o Projeto
-
-1. Clone o repositório para o seu ambiente local em sua pasta de preferência:
-    ```bash
-    git clone https://github.com/garreto9/AfroConnection.git
-    ```
-
-2. Navegue até o diretório do projeto:
-    ```bash
-    cd AfroConnection
-     ```
-
-3. Abra o arquivo `index.html` :
-    ```bash
-    start index.html ou caso esteja na pasta sem ser pelo prompt de comando, apenas dê dois cliques no arquivo index.html
-    ```
 
 ## Link funcional do site:
 ```
