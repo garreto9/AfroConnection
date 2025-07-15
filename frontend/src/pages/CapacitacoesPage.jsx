@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import apiClient from '../services/api';
+import apiClient from '../services/api'; 
 import '../styles/capacitacoes.css';
-
 import PageHero from '../components/PageHero';
 import heroImage from '../assets/images/aprender-com-as-vozes-negras.png';
 import mentoriaImage from '../assets/images/gettyimages.png';
@@ -30,24 +29,25 @@ function CourseCardSkeleton() {
   );
 }
 
-function CourseCard({ image, badge, title, description, details }) {
-  const imageUrl = imageMap[image] || webDevImage;
+function CourseCard({ imagem, categoria, nome, descricao, detalhes }) {
+  // O componente agora busca a imagem importada com base no nome do ficheiro vindo da API
+  const imageUrl = imageMap[imagem] || webDevImage; // Usa uma imagem padrão se não encontrar
 
   return (
     <div className="col-md-6 col-lg-4 mb-4">
       <div className="course-card">
         <div className="course-image-container">
-          <img src={imageUrl} alt={title} className="img-fluid" />
-          <span className="course-badge">{badge}</span>
+          <img src={imageUrl} alt={nome} className="img-fluid" />
+          <span className="course-badge">{categoria}</span>
         </div>
         <div className="course-content p-4">
-          <h3>{title}</h3>
-          <p>{description}</p>
-          <ul className="course-details list-unstyled">
-            {details.map((detail, index) => (
+          <h3>{nome}</h3>
+          <p>{descricao}</p>
+          {/* <ul className="course-details list-unstyled">
+            {detalhes.map((detail, index) => (
               <li key={index}><i className={`bi ${detail.icon} me-2`}></i>{detail.text}</li>
             ))}
-          </ul>
+          </ul> */}
           <button className="btn btn-primary w-100 mt-auto">Acesse ao Curso</button>
         </div>
       </div>
@@ -64,6 +64,7 @@ function CapacitacoesPage() {
     setLoading(true);
     setError(null);
     try {
+      // 2. Usa o apiClient para fazer a chamada autenticada ao novo endpoint
       const data = await apiClient.get('/capacitacoes');
       setCourses(data);
     } catch (err) {
@@ -77,6 +78,7 @@ function CapacitacoesPage() {
     fetchCourses();
   }, [fetchCourses]);
 
+  // Função para renderizar o conteúdo principal
   const renderContent = () => {
     if (loading) {
       return Array.from({ length: 3 }).map((_, index) => <CourseCardSkeleton key={index} />);

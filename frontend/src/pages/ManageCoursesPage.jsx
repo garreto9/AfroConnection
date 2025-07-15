@@ -1,90 +1,104 @@
-import React, { useState } from 'react';
-import ToastNotification from '../components/ToastNotification'; 
-
-// Simulação dos dados iniciais de cursos
-const initialCourses = [
-    { id: 1, title: 'Desenvolvimento Web', category: 'Tecnologia', description: 'Aprenda HTML, CSS e JavaScript do zero ao avançado.' },
-    { id: 2, title: 'Gestão de Negócios', category: 'Negócios', description: 'Fundamentos de administração e empreendedorismo.' },
-    { id: 3, title: 'Marketing Digital', category: 'Marketing', description: 'Estratégias para divulgar seus produtos ou serviços na internet.' }
-];
+import React, { useState, useEffect, useCallback } from 'react';
+import apiClient from '../services/api';
+import ToastNotification from '../components/ToastNotification';
 
 function ManageCoursesPage() {
-  const [courses, setCourses] = useState(initialCourses);
-  
-  // Estados para os campos do formulário
-  const [editingCourse, setEditingCourse] = useState(null);
-  const [title, setTitle] = useState('');
-  const [category, setCategory] = useState('');
-  const [description, setDescription] = useState('');
+  const [courses, setCourses] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  // 2. Novos estados para as notificações e erros de formulário
+  const [editingCourse, setEditingCourse] = useState(null);
+  const [nome, setNome] = useState('');
+  const [categoria, setCategoria] = useState('');
+  const [descricao, setDescricao] = useState('');
+  const [detalhes, setDetalhes] = useState('');
+  const [imagem, setImagem] = useState('');
+
+
+  // Estados para feedback
   const [notification, setNotification] = useState({ message: '', type: '' });
   const [formErrors, setFormErrors] = useState({});
 
-  // Função para mostrar a notificação
+  // Função para buscar os cursos da API
+  const fetchCourses = useCallback(async () => {
+    try {
+        setLoading(true);
+        const data = await apiClient.get('/capacitacoes');
+        setCourses(data);
+    } catch (error) {
+        showNotification('Erro ao carregar cursos.', 'error');
+    } finally {
+        setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchCourses();
+  }, [fetchCourses]);
+
   const showNotification = (message, type = 'success') => {
     setNotification({ message, type });
   };
 
-  // Função para validar o formulário
   const validateForm = () => {
     const errors = {};
-    if (!title.trim()) errors.title = 'O título do curso é obrigatório.';
-    if (!category.trim()) errors.category = 'A categoria é obrigatória.';
-    if (!description.trim()) errors.description = 'A descrição é obrigatória.';
-    
+    if (!nome.trim()) errors.nome = 'O título do curso é obrigatório.';
+    if (!categoria.trim()) errors.categoria = 'A categoria é obrigatória.';
+    if (!descricao.trim()) errors.descricao = 'A descrição é obrigatória.';
     setFormErrors(errors);
     return Object.keys(errors).length === 0;
   };
 
   const resetForm = () => {
     setEditingCourse(null);
-    setTitle('');
-    setCategory('');
-    setDescription('');
+    setNome('');
+    setCategoria('');
+    setDescricao('');
+    setDetalhes('');
+    setImagem('');
     setFormErrors({});
   };
 
-  // Lida com o envio do formulário (Adicionar ou Editar)
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validateForm()) return;
 
-    if (editingCourse) {
-      const updatedCourses = courses.map(course => 
-        course.id === editingCourse.id ? { ...course, title, category, description } : course
-      );
-      setCourses(updatedCourses);
-      showNotification('Curso atualizado com sucesso!');
-    } else {
-      const newCourse = {
-        id: Date.now(),
-        title,
-        category,
-        description
-      };
-      setCourses([...courses, newCourse]);
-      showNotification('Novo curso adicionado com sucesso!');
+    const courseData = { nome, categoria, descricao, detalhes, imagem };
+
+    try {
+        if (editingCourse) {
+            // Lógica de ATUALIZAÇÃO com API
+            await apiClient.put(`/admin/cursos/${editingCourse.id}`, courseData);
+            showNotification('Curso atualizado com sucesso!');
+        } else {
+            // Lógica de ADIÇÃO com API
+            await apiClient.post('/admin/cursos', courseData);
+            showNotification('Novo curso adicionado com sucesso!');
+        }
+        resetForm();
+        fetchCourses(); // Atualiza a lista de cursos
+    } catch (error) {
+        showNotification(`Erro ao salvar o curso: ${error.message}`, 'error');
     }
-    
-    resetForm();
   };
 
-  // Prepara o formulário para edição
   const handleEdit = (course) => {
     setEditingCourse(course);
-    setTitle(course.title);
-    setCategory(course.category);
-    setDescription(course.description);
-    setFormErrors({});
+    setNome(course.nome);
+    setCategoria(course.categoria);
+    setDescricao(course.descricao);
+    setDetalhes(course.detalhes || '');
+    setImagem(course.imagem || '');
   };
 
-  // Exclui um curso
-  const handleDelete = (courseId) => {
+  const handleDelete = async (courseId) => {
     if (window.confirm('Tem certeza que deseja excluir este curso?')) {
-        const updatedCourses = courses.filter(course => course.id !== courseId);
-        setCourses(updatedCourses);
-        showNotification('Curso excluído com sucesso!', 'error');
+        try {
+            await apiClient.delete(`/admin/cursos/${courseId}`);
+            showNotification('Curso excluído com sucesso!', 'error');
+            fetchCourses(); // Atualiza a lista
+        } catch (error) {
+            showNotification('Erro ao excluir o curso.', 'error');
+        }
     }
   };
 
@@ -102,34 +116,27 @@ function ManageCoursesPage() {
       <form onSubmit={handleSubmit} className="card p-3 mb-4" noValidate>
         <div className="mb-3">
             <label className="form-label">Título do Curso</label>
-            <input 
-                type="text" 
-                className={`form-control ${formErrors.title ? 'is-invalid' : ''}`}
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-            />
-            {formErrors.title && <div className="invalid-feedback">{formErrors.title}</div>}
+            <input type="text" className={`form-control ${formErrors.nome ? 'is-invalid' : ''}`} value={nome} onChange={(e) => setNome(e.target.value)} />
+            {formErrors.nome && <div className="invalid-feedback">{formErrors.nome}</div>}
         </div>
         <div className="mb-3">
             <label className="form-label">Categoria</label>
-            <input 
-                type="text" 
-                className={`form-control ${formErrors.category ? 'is-invalid' : ''}`}
-                placeholder="Ex: Tecnologia, Negócios..." 
-                value={category}
-                onChange={(e) => setCategory(e.target.value)}
-            />
-            {formErrors.category && <div className="invalid-feedback">{formErrors.category}</div>}
+            <input type="text" className={`form-control ${formErrors.categoria ? 'is-invalid' : ''}`} value={categoria} onChange={(e) => setCategoria(e.target.value)} placeholder="Ex: Tecnologia, Negócios..."/>
+            {formErrors.categoria && <div className="invalid-feedback">{formErrors.categoria}</div>}
         </div>
         <div className="mb-3">
             <label className="form-label">Descrição Curta</label>
-            <textarea 
-                className={`form-control ${formErrors.description ? 'is-invalid' : ''}`}
-                rows="3" 
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-            ></textarea>
-            {formErrors.description && <div className="invalid-feedback">{formErrors.description}</div>}
+            <textarea className={`form-control ${formErrors.descricao ? 'is-invalid' : ''}`} rows="3" value={descricao} onChange={(e) => setDescricao(e.target.value)}></textarea>
+            {formErrors.descricao && <div className="invalid-feedback">{formErrors.descricao}</div>}
+        </div>
+        {/* Adicionados campos para detalhes e imagem */}
+        <div className="mb-3">
+            <label className="form-label">Detalhes (separados por ponto e vírgula)</label>
+            <input type="text" className="form-control" value={detalhes} onChange={(e) => setDetalhes(e.target.value)} placeholder="Ex: 60 horas;Certificado;Online"/>
+        </div>
+        <div className="mb-3">
+            <label className="form-label">Nome do Ficheiro da Imagem</label>
+            <input type="text" className="form-control" value={imagem} onChange={(e) => setImagem(e.target.value)} placeholder="Ex: sobre.avif"/>
         </div>
         <div className="d-flex align-items-center mt-2">
             <button type="submit" className="btn btn-primary align-self-start">
@@ -146,17 +153,19 @@ function ManageCoursesPage() {
       <hr className="my-4"/>
 
       <h5>Cursos Existentes</h5>
-      <ul className="list-group">
-        {courses.map(course => (
-          <li key={course.id} className="list-group-item d-flex justify-content-between align-items-center">
-            <span>{course.title} - <strong>{course.category}</strong></span>
-            <div>
-              <button className="btn btn-sm btn-outline-secondary me-2" onClick={() => handleEdit(course)}>Editar</button>
-              <button className="btn btn-sm btn-outline-danger" onClick={() => handleDelete(course.id)}>Excluir</button>
-            </div>
-          </li>
-        ))}
-      </ul>
+      {loading ? <p>A carregar...</p> : (
+        <ul className="list-group">
+            {courses.map(course => (
+            <li key={course.id} className="list-group-item d-flex justify-content-between align-items-center">
+                <span>{course.nome} - <strong>{course.categoria}</strong></span>
+                <div>
+                <button className="btn btn-sm btn-outline-secondary me-2" onClick={() => handleEdit(course)}>Editar</button>
+                <button className="btn btn-sm btn-outline-danger" onClick={() => handleDelete(course.id)}>Excluir</button>
+                </div>
+            </li>
+            ))}
+        </ul>
+      )}
     </div>
   );
 }

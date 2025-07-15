@@ -1,87 +1,106 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
+import apiClient from '../services/api';
 import ToastNotification from '../components/ToastNotification';
 
-// Simulação dos dados iniciais
-const initialJobs = [
-    { id: 1, title: 'Analista de Dados', company: 'DiDi Global', location: 'São Paulo, SP' },
-    { id: 2, title: 'Desenvolvedor(a) de Software', company: 'Amazon', location: 'São Paulo, SP' },
-    { id: 3, title: 'Analista de Marketing', company: 'Divulga Vagas', location: 'São Paulo, SP' }
-];
-
 function ManageJobsPage() {
-  const [jobs, setJobs] = useState(initialJobs);
+  const [jobs, setJobs] = useState([]);
+  const [loading, setLoading] = useState(true);
   
+  // Estados para os campos do formulário
   const [editingJob, setEditingJob] = useState(null);
   const [title, setTitle] = useState('');
   const [company, setCompany] = useState('');
   const [location, setLocation] = useState('');
+  const [tags, setTags] = useState('');
+  const [link, setLink] = useState('');
 
+  // Estados para feedback
   const [notification, setNotification] = useState({ message: '', type: '' });
   const [formErrors, setFormErrors] = useState({});
+
+  // Função para buscar as vagas da API
+  const fetchJobs = useCallback(async () => {
+    try {
+        setLoading(true);
+        const data = await apiClient.get('/oportunidades');
+        setJobs(data);
+    } catch (error) {
+        showNotification('Erro ao carregar vagas.', 'error');
+    } finally {
+        setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchJobs();
+  }, [fetchJobs]);
 
   const showNotification = (message, type = 'success') => {
     setNotification({ message, type });
   };
 
-  // Função para validar o formulário antes de enviar
   const validateForm = () => {
     const errors = {};
-    if (!title.trim()) errors.title = 'O título da vaga é obrigatório.';
-    if (!company.trim()) errors.company = 'O nome da empresa é obrigatório.';
+    if (!title.trim()) errors.title = 'O título é obrigatório.';
+    if (!company.trim()) errors.company = 'A empresa é obrigatória.';
     if (!location.trim()) errors.location = 'A localização é obrigatória.';
-    
     setFormErrors(errors);
     return Object.keys(errors).length === 0;
   };
 
-  // Limpa o formulário e reseta o estado de edição
   const resetForm = () => {
     setEditingJob(null);
     setTitle('');
     setCompany('');
     setLocation('');
+    setTags('');
+    setLink('');
     setFormErrors({});
   };
 
-  // Lida com o envio do formulário (Adicionar ou Editar)
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validateForm()) return;
 
-    if (editingJob) {
-      // Lógica de ATUALIZAÇÃO
-      const updatedJobs = jobs.map(job => 
-        job.id === editingJob.id ? { ...job, title, company, location } : job
-      );
-      setJobs(updatedJobs);
-      showNotification('Vaga atualizada com sucesso!');
-    } else {
-      const newJob = { id: Date.now(), title, company, location };
-      setJobs([...jobs, newJob]);
-      showNotification('Nova vaga adicionada com sucesso!');
+    const jobData = { title, company, location, tags, link };
+
+    try {
+        if (editingJob) {
+            // Lógica de ATUALIZAÇÃO com API
+            await apiClient.put(`/admin/vagas/${editingJob.id}`, jobData);
+            showNotification('Vaga atualizada com sucesso!');
+        } else {
+            // Lógica de ADIÇÃO com API
+            await apiClient.post('/admin/vagas', jobData);
+            showNotification('Nova vaga adicionada com sucesso!');
+        }
+        resetForm();
+        fetchJobs(); // Atualiza a lista de vagas
+    } catch (error) {
+        showNotification(`Erro ao salvar a vaga: ${error.message}`, 'error');
     }
-    
-    resetForm();
   };
 
-  // Prepara o formulário para edição
   const handleEdit = (job) => {
     setEditingJob(job);
     setTitle(job.title);
     setCompany(job.company);
     setLocation(job.location);
-    setFormErrors({});
+    setTags(job.tags || ''); // Usa as tags existentes ou uma string vazia
+    setLink(job.link || '');
   };
 
-  // Exclui uma vaga
-  const handleDelete = (jobId) => {
+  const handleDelete = async (jobId) => {
     if (window.confirm('Tem certeza que deseja excluir esta vaga?')) {
-        const updatedJobs = jobs.filter(job => job.id !== jobId);
-        setJobs(updatedJobs);
-        showNotification('Vaga excluída com sucesso!', 'error');
+        try {
+            await apiClient.delete(`/admin/vagas/${jobId}`);
+            showNotification('Vaga excluída com sucesso!', 'error');
+            fetchJobs(); // Atualiza a lista
+        } catch (error) {
+            showNotification('Erro ao excluir a vaga.', 'error');
+        }
     }
   };
-
 
   return (
     <div>
@@ -94,36 +113,29 @@ function ManageJobsPage() {
       )}
 
       <h4 className="mb-4">{editingJob ? 'Editando Vaga' : 'Adicionar Nova Vaga'}</h4>
-      <form onSubmit={handleSubmit} className="card p-3 mb-4">
+      <form onSubmit={handleSubmit} className="card p-3 mb-4" noValidate>
         <div className="mb-3">
             <label className="form-label">Título da Vaga</label>
-            <input 
-                type="text" 
-                className={`form-control ${formErrors.title ? 'is-invalid' : ''}`}
-                value={title} 
-                onChange={(e) => setTitle(e.target.value)} 
-            />
+            <input type="text" className={`form-control ${formErrors.title ? 'is-invalid' : ''}`} value={title} onChange={(e) => setTitle(e.target.value)} />
             {formErrors.title && <div className="invalid-feedback">{formErrors.title}</div>}
         </div>
         <div className="mb-3">
             <label className="form-label">Empresa</label>
-            <input 
-                type="text" 
-                className={`form-control ${formErrors.company ? 'is-invalid' : ''}`}
-                value={company}
-                onChange={(e) => setCompany(e.target.value)}
-            />
-             {formErrors.company && <div className="invalid-feedback">{formErrors.company}</div>}
+            <input type="text" className={`form-control ${formErrors.company ? 'is-invalid' : ''}`} value={company} onChange={(e) => setCompany(e.target.value)} />
+            {formErrors.company && <div className="invalid-feedback">{formErrors.company}</div>}
         </div>
         <div className="mb-3">
             <label className="form-label">Localização</label>
-            <input 
-                type="text" 
-                className={`form-control ${formErrors.location ? 'is-invalid' : ''}`}
-                value={location}
-                onChange={(e) => setLocation(e.target.value)}
-            />
+            <input type="text" className={`form-control ${formErrors.location ? 'is-invalid' : ''}`} value={location} onChange={(e) => setLocation(e.target.value)} />
             {formErrors.location && <div className="invalid-feedback">{formErrors.location}</div>}
+        </div>
+        <div className="mb-3">
+            <label className="form-label">Tags (separadas por vírgula)</label>
+            <input type="text" className="form-control" value={tags} onChange={(e) => setTags(e.target.value)} placeholder="Ex: SQL, Tecnologia, Liderança"/>
+        </div>
+        <div className="mb-3">
+            <label className="form-label">Link da Vaga</label>
+            <input type="url" className="form-control" value={link} onChange={(e) => setLink(e.target.value)} placeholder="https://..."/>
         </div>
         <div className="d-flex align-items-center mt-2">
             <button type="submit" className="btn btn-primary align-self-start">
@@ -140,17 +152,19 @@ function ManageJobsPage() {
       <hr className="my-4"/>
 
       <h5>Vagas Existentes</h5>
-      <ul className="list-group">
-        {jobs.map(job => (
-          <li key={job.id} className="list-group-item d-flex justify-content-between align-items-center">
-            <span>{job.title} - <strong>{job.company}</strong> ({job.location})</span>
-            <div>
-              <button className="btn btn-sm btn-outline-secondary me-2" onClick={() => handleEdit(job)}>Editar</button>
-              <button className="btn btn-sm btn-outline-danger" onClick={() => handleDelete(job.id)}>Excluir</button>
-            </div>
-          </li>
-        ))}
-      </ul>
+      {loading ? <p>A carregar...</p> : (
+        <ul className="list-group">
+            {jobs.map(job => (
+            <li key={job.id} className="list-group-item d-flex justify-content-between align-items-center">
+                <span>{job.title} - <strong>{job.company}</strong></span>
+                <div>
+                <button className="btn btn-sm btn-outline-secondary me-2" onClick={() => handleEdit(job)}>Editar</button>
+                <button className="btn btn-sm btn-outline-danger" onClick={() => handleDelete(job.id)}>Excluir</button>
+                </div>
+            </li>
+            ))}
+        </ul>
+      )}
     </div>
   );
 }
