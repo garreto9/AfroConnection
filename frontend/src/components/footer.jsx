@@ -14,9 +14,9 @@ function Footer() {
                 
                 <div className="footer-links mb-4">
                     <NavLink to="/sobre">Sobre</NavLink>
-                    <a href="#" onClick={handlePlaceholderClick}>Contato</a>
-                    <a href="#" onClick={handlePlaceholderClick}>Privacidade</a>
-                    <a href="#" onClick={handlePlaceholderClick}>Termos</a>
+                    <NavLink to="/contato">Contato</NavLink>
+                    <NavLink to="/privacidade">Privacidade</NavLink>
+                    <NavLink to="/termos">Termos</NavLink>
                 </div>
                 <p className="copyright-text mb-0">© 2025 AfroConnection. Todos os direitos reservados.</p>
             </div>
