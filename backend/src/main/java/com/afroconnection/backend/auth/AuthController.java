@@ -6,7 +6,6 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -15,43 +14,58 @@ import org.springframework.web.bind.annotation.RestController;
 import com.afroconnection.backend.security.JwtService;
 import com.afroconnection.backend.user.User;
 import com.afroconnection.backend.user.UserRepository;
+import com.afroconnection.backend.user.UserService;
 
 // DTOs para os pedidos e respostas
 record RegistrationRequest(String nome, String email, String senha) {}
 record LoginRequest(String email, String senha) {}
 record AuthResponse(String token) {}
+record ForgotPasswordRequest(String email) {}
+record ResetPasswordRequest(String token, String newPassword) {}
 
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
 
     @Autowired
-    private UserRepository userRepository;
+    private UserService userService;
 
-    @Autowired
-    private BCryptPasswordEncoder passwordEncoder;
-    
     @Autowired
     private JwtService jwtService;
 
     @Autowired
     private AuthenticationManager authenticationManager;
+    
+    @Autowired
+    private UserRepository userRepository;
 
     @PostMapping("/register")
     public ResponseEntity<String> registerUser(@RequestBody RegistrationRequest request) {
-        if (userRepository.findByEmail(request.email()).isPresent()) {
-            return ResponseEntity.status(409).body("Este email já está em uso.");
+        try {
+            userService.registerUser(request.nome(), request.email(), request.senha());
+            return ResponseEntity.ok("Utilizador registado com sucesso!");
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(409).body(e.getMessage());
         }
-
-        String senhaCriptografada = passwordEncoder.encode(request.senha());
-        User novoUtilizador = new User(request.nome(), request.email(), senhaCriptografada, "user");
-        userRepository.save(novoUtilizador);
-        
-        return ResponseEntity.ok("Utilizador registado com sucesso!");
     }
 
+    @PostMapping("/forgot-password")
+    public ResponseEntity<String> forgotPassword(@RequestBody ForgotPasswordRequest request) {
+        userService.generatePasswordResetToken(request.email());
+        return ResponseEntity.ok("Se um utilizador com este email existir, um link de recuperação foi enviado.");
+    }
+
+    @PostMapping("/reset-password")
+    public ResponseEntity<String> resetPassword(@RequestBody ResetPasswordRequest request) {
+        try {
+            userService.resetPassword(request.token(), request.newPassword());
+            return ResponseEntity.ok("Senha redefinida com sucesso!");
+        } catch (RuntimeException e) {
+            // Retorna um erro se o token for inválido ou tiver expirado
+            return ResponseEntity.status(400).body(e.getMessage());
+        }
+    }
     
-    // Endpoint para autenticar um utilizador e retornar um token JWT.
     @PostMapping("/login")
     public ResponseEntity<?> loginUser(@RequestBody LoginRequest request) {
         try {
@@ -73,3 +87,4 @@ public class AuthController {
         }
     }
 }
+

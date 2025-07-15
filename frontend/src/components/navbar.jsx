@@ -167,7 +167,7 @@ function Navbar() {
                   </li>
               ) : (
                   <li className="nav-item ms-lg-2 mt-3 mt-lg-0">
-                      <NavLink to="/login" className="btn btn-outline-light login-btn" onClick={closeMenu}><i className="bi bi-person me-1"></i>Login / Cadastro</NavLink>
+                      <NavLink to="/login" className="btn btn-outline-light login-btn" onClick={closeMenu}><i className="bi bi-person me-1"></i>Login | Cadastro</NavLink>
                   </li>
               )}
             </ul>

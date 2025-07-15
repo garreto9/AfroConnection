@@ -1,10 +1,13 @@
 const API_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080';
 
-const getAuthHeaders = () => {
+const getAuthHeaders = (isFormData = false) => {
     const token = sessionStorage.getItem('authToken');
-    const headers = {
-        'Content-Type': 'application/json',
-    };
+    const headers = {};
+
+    if (!isFormData) {
+        headers['Content-Type'] = 'application/json';
+    }
+
     if (token) {
         headers['Authorization'] = `Bearer ${token}`;
     }
@@ -58,7 +61,18 @@ const apiClient = {
     });
     return handleResponse(response);
   },
+
+  upload: async (endpoint, file) => {
+    const formData = new FormData();
+    formData.append('file', file);
+
+    const response = await fetch(`${API_URL}/api${endpoint}`, {
+        method: 'POST',
+        headers: getAuthHeaders(true),
+        body: formData,
+    });
+    return handleResponse(response);
+  }
 };
 
 export default apiClient;
-

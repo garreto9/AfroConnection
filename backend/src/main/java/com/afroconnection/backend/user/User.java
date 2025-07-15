@@ -1,29 +1,39 @@
 package com.afroconnection.backend.user;
 
-import jakarta.persistence.*; // para anotações JPA
-import lombok.Getter; // Lombok para gerar getters
-import lombok.NoArgsConstructor; // Lombok para gerar construtor vazio
+import java.time.LocalDateTime;
 
-@Entity // Diz ao JPA que esta classe é uma tabela no banco de dados
-@Table(name = "users") // Nome da tabela
-@Getter
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@Entity
+@Table(name = "users")
 @NoArgsConstructor
 public class User {
 
-    @Id // Chave primária
-    @GeneratedValue(strategy = GenerationType.IDENTITY) // Auto-incremento
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String nome;
     
-    @Column(unique = true) // Garante que cada email seja único
+    @Column(unique = true)
     private String email;
 
     private String senha;
 
-    private String role; // 'user' ou 'admin'
+    private String role;
 
-    // Construtor para criar novos usuários
+    private String resetPasswordToken;
+
+    private LocalDateTime resetPasswordTokenExpiry;
+
     public User(String nome, String email, String senha, String role) {
         this.nome = nome;
         this.email = email;

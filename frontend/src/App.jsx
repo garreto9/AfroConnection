@@ -18,6 +18,8 @@ import SobrePage from './pages/SobrePage';
 import ContatoPage from './pages/ContatoPage'; 
 import PrivacidadePage from './pages/PrivacidadePage';
 import TermosPage from './pages/TermosPage';
+import ForgotPasswordPage from './pages/ForgotPasswordPage';
+import ResetPasswordPage from './pages/ResetPasswordPage';
 
 // Páginas Protegidas
 import AccountSettingsPage from './pages/AccountSettingsPage';
@@ -40,6 +42,8 @@ function App() {
             {/* --- Rotas Públicas --- */}
             <Route path="/" element={<HomePage />} />
             <Route path="/login" element={<LoginPage />} />
+            <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+            <Route path="/reset-password/:token" element={<ResetPasswordPage />} /> 
             <Route path="/cultura" element={<CulturePage />} />
             <Route path="/sobre" element={<SobrePage />} />
             <Route path="/bem-estar" element={<BemEstarPage />} />

@@ -53,13 +53,12 @@ function LoginPage() {
     }
 
     setLoading(true);
-    const result = await login(email, password); // Chama a função do AuthContext
+    const result = await login(email, password);
     setLoading(false);
 
     if (result.success) {
-      navigate('/'); // Redireciona para a home em caso de sucesso
+      navigate('/');
     } else {
-      // Exibe a mensagem de erro retornada pelo contexto (ex: "Email ou senha inválidos.")
       setFormErrors({ general: result.message || 'Ocorreu um erro. Tente novamente.' });
     }
   };
@@ -144,7 +143,7 @@ function LoginPage() {
             {formErrors.general && <div className="invalid-feedback-form d-block mb-2">{formErrors.general}</div>}
             <input className="form-input" type="email" placeholder="Email" value={email} onChange={e => setEmail(e.target.value)} />
             <input className="form-input" type="password" placeholder="Senha" value={password} onChange={e => setPassword(e.target.value)} />
-            <a className="form-link" href="#">Esqueceu sua senha?</a>
+            <Link className="form-link" to="/forgot-password">Esqueceu sua senha?</Link>
             <button className="form-button" type="submit" disabled={loading}>
               {loading && !isSignUp ? <span className="spinner-border spinner-border-sm"></span> : 'Entrar'}
             </button>
