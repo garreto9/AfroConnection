@@ -15,6 +15,9 @@ import CapacitacoesPage from './pages/CapacitacoesPage';
 import OportunidadesPage from './pages/OportunidadesPage';
 import BemEstarPage from './pages/BemEstarPage';
 import SobrePage from './pages/SobrePage';
+import ContatoPage from './pages/ContatoPage'; 
+import PrivacidadePage from './pages/PrivacidadePage';
+import TermosPage from './pages/TermosPage';
 
 // Páginas Protegidas
 import AccountSettingsPage from './pages/AccountSettingsPage';
@@ -40,6 +43,9 @@ function App() {
             <Route path="/cultura" element={<CulturePage />} />
             <Route path="/sobre" element={<SobrePage />} />
             <Route path="/bem-estar" element={<BemEstarPage />} />
+            <Route path="/contato" element={<ContatoPage />} />
+            <Route path="/privacidade" element={<PrivacidadePage />} />
+            <Route path="/termos" element={<TermosPage />} />
 
             {/* --- Rotas Protegidas (Apenas para usuários logados) --- */}
             <Route element={<ProtectedRoute />}>
