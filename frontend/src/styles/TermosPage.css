@@ -1,0 +1,101 @@
+.terms-section {
+  max-width: 900px;
+  margin: 2rem auto;
+  padding: 0 1rem;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: #333;
+}
+
+.terms-section h1 {
+  text-align: center;
+  margin-bottom: 1rem;
+  font-weight: 700;
+  color: #2c3e50;
+}
+
+.intro {
+  text-align: center;
+  font-size: 1.1rem;
+  margin-bottom: 2rem;
+  color: #555;
+}
+
+.terms-container {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.8rem;
+}
+
+.term-card {
+  background: #fff;
+  border-radius: 8px;
+  padding: 1.6rem;
+  box-shadow: 0 2px 6px rgb(0 0 0 / 0.1);
+  transition: box-shadow 0.3s ease;
+}
+
+.term-card:hover {
+  box-shadow: 0 4px 12px rgb(0 0 0 / 0.15);
+}
+
+.term-card header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.8rem;
+}
+
+.term-card header i.icon {
+  font-size: 1.8rem;
+  flex-shrink: 0;      /* impede que o ícone encolha */
+}
+
+.term-card header h2 {
+  font-size: 1.3rem;
+  color: #34495e;
+  margin: 0;
+}
+
+.icon {
+  font-size: 1.8rem;
+}
+
+/* Cores específicas para cada ícone */
+.icon-accept {
+  color: #27ae60; /* verde */
+}
+
+.icon-usage {
+  color: #2980b9; /* azul */
+}
+
+.icon-account {
+  color: #8e44ad; /* roxo */
+}
+
+.icon-content {
+  color: #d35400; /* laranja */
+}
+
+.icon-liability {
+  color: #e67e22; /* amarelo escuro */
+}
+
+.icon-changes {
+  color: #16a085; /* verde-água */
+}
+
+.icon-termination {
+  color: #c0392b; /* vermelho */
+}
+
+.term-card ul {
+  margin-top: 0.5rem;
+  padding-left: 1.2rem;
+  color: #555;
+}
+
+.term-card ul li {
+  margin-bottom: 0.4rem;
+  line-height: 1.3;
+}
