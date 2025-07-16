@@ -2,12 +2,9 @@ import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import ToastNotification from '../components/ToastNotification';
-import apiClient from '../services/api'; // Importa o nosso apiClient
+import apiClient from '../services/api';
 import '../styles/AccountSettingsPage.css';
 
-/**
- * Componente para o Modal de Confirmação de Exclusão.
- */
 function DeleteConfirmationModal({ isOpen, onClose, onConfirm, isClosing }) {
     if (!isOpen) return null;
 
@@ -26,12 +23,13 @@ function DeleteConfirmationModal({ isOpen, onClose, onConfirm, isClosing }) {
 }
 
 function AccountSettingsPage() {
-    const { user, logout } = useAuth();
+    // Pega a nova função 'updateUserProfile' do contexto
+    const { user, logout, updateUserProfile } = useAuth();
     const navigate = useNavigate();
     
     // Estados para os formulários e feedback
     const [nickname, setNickname] = useState(user?.nickname || '');
-    const [imageFile, setImageFile] = useState(null); // Estado para o novo ficheiro de imagem
+    const [imageFile, setImageFile] = useState(null);
     const [currentPassword, setCurrentPassword] = useState('');
     const [newPassword, setNewPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
@@ -60,8 +58,6 @@ function AccountSettingsPage() {
         // Se um novo ficheiro de imagem foi selecionado, faz o upload
         if (imageFile) {
             try {
-                // Nota: Idealmente, teríamos um endpoint não-admin para isto.
-                // Por agora, reutilizamos o endpoint de admin para a simulação.
                 const uploadResponse = await apiClient.upload('/admin/upload', imageFile);
                 newImageUrl = uploadResponse.url;
             } catch (error) {
@@ -71,11 +67,16 @@ function AccountSettingsPage() {
             }
         }
 
-        // Lógica de back-end para atualizar apelido e a nova URL da foto iria aqui
         console.log("Atualizando perfil com:", { nickname, profilePicture: newImageUrl });
+        
+        updateUserProfile({
+            nickname: nickname,
+            profilePicture: newImageUrl
+        });
+
         showNotification('Perfil atualizado com sucesso!');
+        setImageFile(null);
         setIsSubmitting(false);
-        // No futuro, você atualizaria o estado global do utilizador com a nova imagem aqui.
     };
 
     const handleChangePassword = (e) => {
@@ -94,14 +95,12 @@ function AccountSettingsPage() {
         }
 
         setErrors({});
-        // Lógica de back-end para trocar a senha iria aqui
         showNotification('Senha alterada com sucesso!');
         setCurrentPassword('');
         setNewPassword('');
         setConfirmPassword('');
     };
     
-    // Agora chamada pelo modal
     const handleDeleteAccount = () => {
         setIsModalClosing(true);
         setTimeout(() => {
@@ -111,7 +110,6 @@ function AccountSettingsPage() {
         }, 300);
     };
 
-    // Funções para controlar o modal
     const openDeleteModal = () => setIsDeleteModalOpen(true);
     const closeDeleteModal = () => {
         setIsModalClosing(true);

@@ -39,7 +39,8 @@ export const AuthProvider = ({ children }) => {
       });
 
       if (!response.ok) {
-        throw new Error('Email ou senha inválidos.');
+        const errorText = await response.text();
+        throw new Error(errorText || 'Email ou senha inválidos.');
       }
 
       const data = await response.json();
@@ -67,12 +68,20 @@ export const AuthProvider = ({ children }) => {
     setUser(null);
   };
 
+  const updateUserProfile = (updatedData) => {
+    setUser(currentUser => ({
+        ...currentUser,
+        ...updatedData
+    }));
+  };
+
   const value = {
     user,
     isAuthenticated: !!user,
     isAdmin: user?.role === 'admin',
     login,
-    logout
+    logout,
+    updateUserProfile
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
