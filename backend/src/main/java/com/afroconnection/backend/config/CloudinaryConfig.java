@@ -1,22 +1,23 @@
 package com.afroconnection.backend.config;
 
-import com.cloudinary.Cloudinary;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import java.util.HashMap;
-import java.util.Map;
+import com.cloudinary.Cloudinary;
 
 @Configuration
 public class CloudinaryConfig {
-    @Value("${cloudinary.cloud_name}")
+    @Value("${CLOUDINARY_CLOUD_NAME}")
     private String cloudName;
 
-    @Value("${cloudinary.api_key}")
+    @Value("${CLOUDINARY_API_KEY}")
     private String apiKey;
 
-    @Value("${cloudinary.api_secret}")
+    @Value("${CLOUDINARY_API_SECRET}")
     private String apiSecret;
 
     @Bean
