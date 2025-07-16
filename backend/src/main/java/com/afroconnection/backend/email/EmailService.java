@@ -15,10 +15,11 @@ import com.sendgrid.helpers.mail.objects.Email;
 @Service
 public class EmailService {
 
-    @Value("${SENDGRID_API_KEY}")
+    @Value("${sendgrid.api_key}")
     private String sendGridApiKey;
 
     public void sendPasswordResetEmail(String toEmail, String token) {
+        System.out.println("Chave SendGrid carregada: " + sendGridApiKey);
         Email from = new Email("jeffsonvidaloka@gmail.com"); 
         String subject = "Recuperação de Senha - AfroConnection";
         Email to = new Email(toEmail);
