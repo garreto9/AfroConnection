@@ -15,7 +15,7 @@ import com.sendgrid.helpers.mail.objects.Email;
 @Service
 public class EmailService {
 
-    @Value("${sendgrid.api_key}")
+    @Value("${SENDGRID_API_KEY}")
     private String sendGridApiKey;
 
     public void sendPasswordResetEmail(String toEmail, String token) {
