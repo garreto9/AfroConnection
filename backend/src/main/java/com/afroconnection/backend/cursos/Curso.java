@@ -21,4 +21,5 @@ public class Curso {
     private String descricao;
     private String detalhes;
     private String imagem;
+    private String link;
 }

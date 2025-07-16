@@ -29,8 +29,8 @@ function CourseCardSkeleton() {
   );
 }
 
-  function CourseCard({ imagem, categoria, nome, descricao, detalhes, link }) {
-  const imageUrl = imageMap[imagem] || webDevImage;
+function CourseCard({ imagem, categoria, nome, descricao, detalhes, link }) {
+  const imageUrl = imageMap[imagem] || imagem;
 
   const detailsArray = typeof detalhes === 'string' ? detalhes.split(';') : [];
   
@@ -89,6 +89,7 @@ function CapacitacoesPage() {
     if (loading) {
       return Array.from({ length: 3 }).map((_, index) => <CourseCardSkeleton key={index} />);
     }
+
     if (error) {
       return (
         <div className="col-12 text-center p-5 bg-white rounded shadow-sm">
@@ -98,9 +99,11 @@ function CapacitacoesPage() {
         </div>
       );
     }
+
     if (courses.length === 0) {
       return <div className="col-12 text-center"><p>Nenhum curso disponível no momento.</p></div>;
     }
+    
     return courses.map((course) => <CourseCard key={course.id} {...course} />);
   };
 
@@ -111,6 +114,7 @@ function CapacitacoesPage() {
         subtitle="Desenvolvendo talentos e construindo carreiras através de educação e treinamento de qualidade."
         image={heroImage}
       />
+
       <section className="py-5">
         <div className="container">
           <h2 className="text-center display-6 mb-5">Cursos Disponíveis para Inscrição</h2>
@@ -119,6 +123,7 @@ function CapacitacoesPage() {
           </div>
         </div>
       </section>
+
       <section className="py-5 bg-light">
         <div className="container">
           <div className="row align-items-center">
