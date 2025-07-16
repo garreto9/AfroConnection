@@ -26,7 +26,6 @@ const handleResponse = async (response) => {
     return null; 
 };
 
-
 const apiClient = {
   get: async (endpoint) => {
     const response = await fetch(`${API_URL}/api${endpoint}`, {

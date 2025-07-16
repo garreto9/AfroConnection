@@ -12,8 +12,9 @@ function ManageCoursesPage() {
   const [categoria, setCategoria] = useState('');
   const [descricao, setDescricao] = useState('');
   const [detalhes, setDetalhes] = useState('');
-  const [imagem, setImagem] = useState('');
-  const [imageFile, setImageFile] = useState(null);
+  const [imagem, setImagem] = useState(''); // Guarda a URL da imagem existente
+  const [imageFile, setImageFile] = useState(null); // Guarda o ficheiro da imagem para o novo upload
+
   // Estados para feedback
   const [notification, setNotification] = useState({ message: '', type: '' });
   const [formErrors, setFormErrors] = useState({});
@@ -46,6 +47,7 @@ function ManageCoursesPage() {
     if (!categoria.trim()) errors.categoria = 'A categoria é obrigatória.';
     if (!descricao.trim()) errors.descricao = 'A descrição é obrigatória.';
     
+    // Se não estiver a editar, a imagem é obrigatória
     if (!editingCourse && !imageFile) {
         errors.imagem = 'A imagem do curso é obrigatória.';
     }
@@ -72,10 +74,11 @@ function ManageCoursesPage() {
     setIsSubmitting(true);
     let imageUrl = imagem;
 
+    // Se um novo ficheiro de imagem foi selecionado, faz o upload primeiro
     if (imageFile) {
         try {
             const uploadResponse = await apiClient.upload('/admin/upload', imageFile);
-            imageUrl = uploadResponse.url;
+            imageUrl = uploadResponse.url; // Pega a nova URL do Cloudinary
         } catch (error) {
             showNotification('Erro ao fazer upload da imagem.', 'error');
             setIsSubmitting(false);
@@ -96,7 +99,7 @@ function ManageCoursesPage() {
             showNotification('Novo curso adicionado com sucesso!');
         }
         resetForm();
-        fetchCourses();
+        fetchCourses(); // Atualiza a lista de cursos
     } catch (error) {
         showNotification(`Erro ao salvar o curso: ${error.message}`, 'error');
     } finally {
@@ -110,8 +113,8 @@ function ManageCoursesPage() {
     setCategoria(course.categoria);
     setDescricao(course.descricao);
     setDetalhes(course.detalhes || '');
-    setImagem(course.imagem || '');
-    setImageFile(null);
+    setImagem(course.imagem || ''); // Guarda a URL da imagem atual
+    setImageFile(null); // Limpa a seleção de ficheiro anterior
     setFormErrors({});
   };
 
@@ -120,7 +123,7 @@ function ManageCoursesPage() {
         try {
             await apiClient.delete(`/admin/cursos/${courseId}`);
             showNotification('Curso excluído com sucesso!', 'error');
-            fetchCourses();
+            fetchCourses(); // Atualiza a lista
         } catch (error) {
             showNotification('Erro ao excluir o curso.', 'error');
         }
@@ -196,7 +199,10 @@ function ManageCoursesPage() {
         <ul className="list-group">
             {courses.map(course => (
             <li key={course.id} className="list-group-item d-flex justify-content-between align-items-center">
-                <span>{course.nome} - <strong>{course.categoria}</strong></span>
+                <div className="d-flex align-items-center">
+                    {course.imagem && <img src={course.imagem} alt={course.nome} className="me-3" style={{width: '50px', height: '50px', objectFit: 'cover', borderRadius: '5px'}}/>}
+                    <span>{course.nome} - <strong>{course.categoria}</strong></span>
+                </div>
                 <div>
                 <button className="btn btn-sm btn-outline-secondary me-2" onClick={() => handleEdit(course)}>Editar</button>
                 <button className="btn btn-sm btn-outline-danger" onClick={() => handleDelete(course.id)}>Excluir</button>

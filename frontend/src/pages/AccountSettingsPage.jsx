@@ -2,9 +2,12 @@ import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import ToastNotification from '../components/ToastNotification';
+import apiClient from '../services/api'; // Importa o nosso apiClient
 import '../styles/AccountSettingsPage.css';
 
-
+/**
+ * Componente para o Modal de Confirmação de Exclusão.
+ */
 function DeleteConfirmationModal({ isOpen, onClose, onConfirm, isClosing }) {
     if (!isOpen) return null;
 
@@ -26,13 +29,17 @@ function AccountSettingsPage() {
     const { user, logout } = useAuth();
     const navigate = useNavigate();
     
+    // Estados para os formulários e feedback
     const [nickname, setNickname] = useState(user?.nickname || '');
+    const [imageFile, setImageFile] = useState(null); // Estado para o novo ficheiro de imagem
     const [currentPassword, setCurrentPassword] = useState('');
     const [newPassword, setNewPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
     const [errors, setErrors] = useState({});
     const [notification, setNotification] = useState('');
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
+    // Estados para o modal de exclusão
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
     const [isModalClosing, setIsModalClosing] = useState(false);
 
@@ -44,9 +51,31 @@ function AccountSettingsPage() {
         setNotification(message);
     };
 
-    const handleProfileUpdate = (e) => {
+    const handleProfileUpdate = async (e) => {
         e.preventDefault();
+        setIsSubmitting(true);
+        
+        let newImageUrl = user.profilePicture;
+
+        // Se um novo ficheiro de imagem foi selecionado, faz o upload
+        if (imageFile) {
+            try {
+                // Nota: Idealmente, teríamos um endpoint não-admin para isto.
+                // Por agora, reutilizamos o endpoint de admin para a simulação.
+                const uploadResponse = await apiClient.upload('/admin/upload', imageFile);
+                newImageUrl = uploadResponse.url;
+            } catch (error) {
+                showNotification('Erro ao fazer upload da imagem.', 'error');
+                setIsSubmitting(false);
+                return;
+            }
+        }
+
+        // Lógica de back-end para atualizar apelido e a nova URL da foto iria aqui
+        console.log("Atualizando perfil com:", { nickname, profilePicture: newImageUrl });
         showNotification('Perfil atualizado com sucesso!');
+        setIsSubmitting(false);
+        // No futuro, você atualizaria o estado global do utilizador com a nova imagem aqui.
     };
 
     const handleChangePassword = (e) => {
@@ -65,12 +94,14 @@ function AccountSettingsPage() {
         }
 
         setErrors({});
+        // Lógica de back-end para trocar a senha iria aqui
         showNotification('Senha alterada com sucesso!');
         setCurrentPassword('');
         setNewPassword('');
         setConfirmPassword('');
     };
     
+    // Agora chamada pelo modal
     const handleDeleteAccount = () => {
         setIsModalClosing(true);
         setTimeout(() => {
@@ -121,7 +152,16 @@ function AccountSettingsPage() {
                                     <img src={user.profilePicture} alt="Perfil" className="settings-profile-pic" />
                                     <div className="ms-3">
                                         <h5 className="card-title mb-1">{user.name}</h5>
-                                        <button type="button" className="btn btn-sm btn-outline-secondary">Alterar foto</button>
+                                        {/* Input de ficheiro para alterar a foto */}
+                                        <label htmlFor="profile-pic-upload" className="btn btn-sm btn-outline-secondary">Alterar foto</label>
+                                        <input 
+                                            id="profile-pic-upload"
+                                            type="file" 
+                                            accept="image/*"
+                                            onChange={(e) => setImageFile(e.target.files[0])}
+                                            style={{ display: 'none' }}
+                                        />
+                                        {imageFile && <span className="ms-2 text-muted small">{imageFile.name}</span>}
                                     </div>
                                 </div>
                                 <div className="mb-3">
@@ -135,7 +175,9 @@ function AccountSettingsPage() {
                                         placeholder="Como você quer ser chamado?"
                                     />
                                 </div>
-                                <button type="submit" className="btn btn-primary">Salvar Alterações</button>
+                                <button type="submit" className="btn btn-primary" disabled={isSubmitting}>
+                                    {isSubmitting ? <span className="spinner-border spinner-border-sm"></span> : 'Salvar Alterações'}
+                                </button>
                             </form>
                         </div>
                     </div>
