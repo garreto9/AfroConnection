@@ -48,6 +48,9 @@ function JobSearchForm({ searchTerm, onSearchChange, selectedArea, onAreaChange 
 }
 
 function JobCard({ title, company, location, tags, link }) {
+  // Normaliza os dados das tags para garantir que sejam sempre uma array
+  const tagArray = typeof tags === 'string' ? tags.split(',') : (tags || []);
+
   return (
     <div className="job-card p-4 bg-white rounded shadow-sm mb-4">
       <div className="d-flex justify-content-between align-items-start">
@@ -56,8 +59,8 @@ function JobCard({ title, company, location, tags, link }) {
           <p className="company mb-2"><i className="bi bi-building me-2"></i>{company}</p>
           <p className="location mb-3"><i className="bi bi-geo-alt me-2"></i>{location}</p>
           <div className="tags">
-            {tags.map((tag, index) => (
-              <span key={index} className="badge bg-light text-dark me-2">{tag}</span>
+            {tagArray.map((tag, index) => (
+              tag.trim() && <span key={index} className="badge bg-light text-dark me-2">{tag.trim()}</span>
             ))}
           </div>
         </div>
@@ -127,21 +130,22 @@ function OportunidadesPage() {
 
   // Filtra as vagas localmente sempre que um filtro muda
   useEffect(() => {
-    let jobs = allJobs;
+    let jobsToFilter = allJobs;
 
     if (searchTerm) {
-      jobs = allJobs.filter(job => 
+        jobsToFilter = jobsToFilter.filter(job => 
         job.title.toLowerCase().includes(searchTerm.toLowerCase())
       );
     }
 
     if (selectedArea) {
-      jobs = jobs.filter(job => 
-        job.tags.map(tag => tag.toLowerCase()).includes(selectedArea.toLowerCase())
-      );
+      jobsToFilter = jobsToFilter.filter(job => {
+        const jobTags = typeof job.tags === 'string' ? job.tags.toLowerCase() : (job.tags || []).join(',').toLowerCase();
+        return jobTags.includes(selectedArea.toLowerCase());
+      });
     }
 
-    setFilteredJobs(jobs);
+    setFilteredJobs(jobsToFilter);
   }, [searchTerm, selectedArea, allJobs]);
 
   const renderContent = () => {
