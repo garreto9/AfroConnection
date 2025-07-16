@@ -1,39 +1,58 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
+import apiClient from '../services/api';
 import ToastNotification from '../components/ToastNotification';
 
-// Simulação de dados de usuários que futuramente serão do banco de dados
-const initialUsers = [
-    { id: 1, name: 'Jeffson', email: 'jeffson@email.com', role: 'admin' },
-    { id: 2, name: 'Maria Silva', email: 'maria.s@email.com', role: 'user' },
-    { id: 3, name: 'Carlos Pereira', email: 'carlos.p@email.com', role: 'user' },
-];
-
 function ManageUsersPage() {
-  const [users, setUsers] = useState(initialUsers);
+  const [users, setUsers] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [notification, setNotification] = useState({ message: '', type: '' });
+
+  const fetchUsers = useCallback(async () => {
+    try {
+        setLoading(true);
+        const data = await apiClient.get('/admin/usuarios');
+        setUsers(data);
+    } catch (error) {
+        showNotification('Erro ao carregar utilizadores.', 'error');
+    } finally {
+        setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchUsers();
+  }, [fetchUsers]);
 
   const showNotification = (message, type = 'success') => {
     setNotification({ message, type });
   };
 
   const handleResetPassword = (userName) => {
-    if (window.confirm(`Tem certeza que deseja resetar a senha para o usuário ${userName}? Uma nova senha temporária será gerada.`)) {
-      showNotification(`Senha para ${userName} resetada com sucesso!`);
+    if (window.confirm(`Tem certeza que deseja resetar a senha para o usuário ${userName}?`)) {
+      showNotification(`Senha para ${userName} resetada com sucesso! (simulação)`);
     }
   };
 
-  const handleDeleteUser = (userId, userName) => {
-    if (window.confirm(`Tem certeza que deseja EXCLUIR o usuário ${userName}? Esta ação é permanente.`)) {
-        setUsers(users.filter(user => user.id !== userId));
-        showNotification(`Usuário ${userName} excluído com sucesso!`, 'error');
+  const handleDeleteUser = async (userId, userName) => {
+    if (window.confirm(`Tem certeza que deseja EXCLUIR o usuário ${userName}?`)) {
+        try {
+            await apiClient.delete(`/admin/usuarios/${userId}`);
+            showNotification(`Utilizador ${userName} excluído com sucesso!`, 'error');
+            fetchUsers();
+        } catch (error) {
+            showNotification('Erro ao excluir o utilizador.', 'error');
+        }
     }
   };
 
-  const handleRoleChange = (userId, newRole) => {
-    setUsers(users.map(user => 
-        user.id === userId ? { ...user, role: newRole } : user
-    ));
-    showNotification('Cargo do usuário alterado com sucesso!');
+  const handleRoleChange = async (userId, newRole) => {
+    try {
+        await apiClient.put(`/admin/usuarios/${userId}/role`, { role: newRole });
+        showNotification('Cargo do utilizador alterado com sucesso!');
+        fetchUsers();
+    } catch (error) {
+        showNotification('Erro ao alterar o cargo.', 'error');
+    }
   };
 
   return (
@@ -45,7 +64,6 @@ function ManageUsersPage() {
           onClose={() => setNotification({ message: '', type: '' })}
         />
       )}
-
       <h4 className="mb-4">Gerenciar Usuários</h4>
       <div className="card">
         <div className="card-body">
@@ -62,38 +80,42 @@ function ManageUsersPage() {
                         </tr>
                     </thead>
                     <tbody>
-                        {users.map(user => (
-                            <tr key={user.id}>
-                                <td>{user.id}</td>
-                                <td>{user.name}</td>
-                                <td>{user.email}</td>
-                                <td>
-                                    <select 
-                                        className={`form-select form-select-sm ${user.role === 'admin' ? 'fw-bold' : ''}`} 
-                                        value={user.role}
-                                        onChange={(e) => handleRoleChange(user.id, e.target.value)}
-                                        style={{ width: '120px' }}
-                                    >
-                                        <option value="user">Usuário</option>
-                                        <option value="admin">Admin</option>
-                                    </select>
-                                </td>
-                                <td className="text-end">
-                                    <button 
-                                        className="btn btn-sm btn-outline-secondary me-2"
-                                        onClick={() => handleResetPassword(user.name)}
-                                    >
-                                        Resetar Senha
-                                    </button>
-                                    <button 
-                                        className="btn btn-sm btn-outline-danger"
-                                        onClick={() => handleDeleteUser(user.id, user.name)}
-                                    >
-                                        Excluir
-                                    </button>
-                                </td>
-                            </tr>
-                        ))}
+                        {loading ? (
+                            <tr><td colSpan="5" className="text-center p-4">A carregar...</td></tr>
+                        ) : (
+                            users.map(user => (
+                                <tr key={user.id}>
+                                    <td>{user.id}</td>
+                                    <td>{user.name}</td>
+                                    <td>{user.email}</td>
+                                    <td>
+                                        <select 
+                                            className={`form-select form-select-sm ${user.role === 'admin' ? 'fw-bold text-success' : ''}`} 
+                                            value={user.role}
+                                            onChange={(e) => handleRoleChange(user.id, e.target.value)}
+                                            style={{ width: '120px' }}
+                                        >
+                                            <option value="user">Usuário</option>
+                                            <option value="admin">Admin</option>
+                                        </select>
+                                    </td>
+                                    <td className="text-end">
+                                        <button 
+                                            className="btn btn-sm btn-outline-secondary me-2"
+                                            onClick={() => handleResetPassword(user.name)}
+                                        >
+                                            Resetar Senha
+                                        </button>
+                                        <button 
+                                            className="btn btn-sm btn-outline-danger"
+                                            onClick={() => handleDeleteUser(user.id, user.name)}
+                                        >
+                                            Excluir
+                                        </button>
+                                    </td>
+                                </tr>
+                            ))
+                        )}
                     </tbody>
                 </table>
             </div>

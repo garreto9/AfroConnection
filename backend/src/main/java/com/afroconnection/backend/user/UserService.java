@@ -1,6 +1,8 @@
 package com.afroconnection.backend.user;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,4 +55,20 @@ public class UserService {
 
         userRepository.save(user);
     }
+
+    public List<User> getAllUsers() {
+        return userRepository.findAll();
+    }
+
+    public void deleteUser(Long id) {
+        userRepository.deleteById(id);
+    }
+
+    public Optional<User> updateUserRole(Long id, String newRole) {
+        return userRepository.findById(id).map(user -> {
+            user.setRole(newRole);
+            return userRepository.save(user);
+        });
+    }
 }
+
