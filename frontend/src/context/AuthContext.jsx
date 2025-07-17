@@ -13,10 +13,11 @@ export const AuthProvider = ({ children }) => {
       try {
         const decodedToken = jwtDecode(token);
         if (decodedToken.exp * 1000 > Date.now()) {
+          const profilePicture = decodedToken.profilePicture || `https://placehold.co/40x40/${decodedToken.role === 'admin' ? '9a3412' : 'c2410c'}/FFFFFF?text=${decodedToken.nome.charAt(0)}`;
           setUser({
             name: decodedToken.nome,
             role: decodedToken.role,
-            profilePicture: `https://placehold.co/40x40/${decodedToken.role === 'admin' ? '9a3412' : 'c2410c'}/FFFFFF?text=${decodedToken.nome.charAt(0)}`
+            profilePicture: profilePicture
           });
         } else {
           sessionStorage.removeItem('authToken');
@@ -49,10 +50,12 @@ export const AuthProvider = ({ children }) => {
       sessionStorage.setItem('authToken', token);
 
       const decodedToken = jwtDecode(token);
+      const profilePicture = decodedToken.profilePicture || `https://placehold.co/40x40/${decodedToken.role === 'admin' ? '9a3412' : 'c2410c'}/FFFFFF?text=${decodedToken.nome.charAt(0)}`;
+      
       setUser({
         name: decodedToken.nome,
         role: decodedToken.role,
-        profilePicture: `https://placehold.co/40x40/${decodedToken.role === 'admin' ? '9a3412' : 'c2410c'}/FFFFFF?text=${decodedToken.nome.charAt(0)}`
+        profilePicture: profilePicture
       });
 
       return { success: true };

@@ -24,23 +24,21 @@ public class JwtService {
     @Value("${jwt.secret}")
     private String secretKey;
 
-    // --- Métodos de Geração de Token (já existentes) ---
     public String generateToken(User user) {
         Map<String, Object> claims = new HashMap<>();
         claims.put("userId", user.getId());
         claims.put("role", user.getRole());
         claims.put("nome", user.getNome());
+        claims.put("profilePicture", user.getProfilePicture());
 
         return Jwts.builder()
                 .setClaims(claims)
                 .setSubject(user.getEmail())
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24)) // 24 horas
+                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24))
                 .signWith(getSignInKey(), SignatureAlgorithm.HS256)
                 .compact();
     }
-
-    // --- NOVOS MÉTODOS para Ler e Validar Tokens ---
 
     // Extrai o email do utilizador do token
     public String extractUsername(String token) {

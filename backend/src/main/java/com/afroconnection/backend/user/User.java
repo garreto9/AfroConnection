@@ -34,6 +34,8 @@ public class User {
 
     private LocalDateTime resetPasswordTokenExpiry;
 
+    private String profilePicture;
+
     public User(String nome, String email, String senha, String role) {
         this.nome = nome;
         this.email = email;
