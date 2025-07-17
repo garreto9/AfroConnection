@@ -90,13 +90,12 @@
 <dependency>
     <groupId>com.sendgrid</groupId>
     <artifactId>sendgrid-java</artifactId>
-    <version>4.9.3</version>
 </dependency>
 
 <dependency>
-  <groupId>io.github.cdimascio</groupId>
-  <artifactId>java-dotenv</artifactId>
-  <version>5.2.2</version>
+    <groupId>io.github.cdimascio</groupId>
+    <artifactId>java-dotenv</artifactId>
+    <version>5.2.2</version>
 </dependency>
 
 	</dependencies>
