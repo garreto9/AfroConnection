@@ -5,6 +5,7 @@ import ToastNotification from '../components/ToastNotification';
 function ManageCoursesPage() {
   const [courses, setCourses] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [link, setLink] = useState('');
   
   // Estados para o formulário
   const [editingCourse, setEditingCourse] = useState(null);
@@ -65,6 +66,7 @@ function ManageCoursesPage() {
     setImagem('');
     setImageFile(null);
     setFormErrors({});
+    setLink('');
   };
 
   const handleSubmit = async (e) => {
@@ -86,7 +88,7 @@ function ManageCoursesPage() {
         }
     }
 
-    const courseData = { nome, categoria, descricao, detalhes, imagem: imageUrl };
+    const courseData = { nome, categoria, descricao, detalhes, link, imagem: imageUrl };
 
     try {
         if (editingCourse) {
@@ -116,6 +118,7 @@ function ManageCoursesPage() {
     setImagem(course.imagem || ''); // Guarda a URL da imagem atual
     setImageFile(null); // Limpa a seleção de ficheiro anterior
     setFormErrors({});
+    setLink(course.link || '');
   };
 
   const handleDelete = async (courseId) => {
@@ -179,6 +182,17 @@ function ManageCoursesPage() {
             <label className="form-label">Detalhes (separados por ponto e vírgula)</label>
             <input type="text" className="form-control" value={detalhes} onChange={(e) => setDetalhes(e.target.value)} placeholder="Ex: 60 horas;Certificado;Online"/>
         </div>
+
+        <div className="mb-3">
+                    <label className="form-label">Link do Curso (URL)</label>
+                    <input 
+                        type="url" 
+                        className="form-control" 
+                        value={link}
+                        onChange={(e) => setLink(e.target.value)}
+                        placeholder="https://..."
+                    />
+                </div>
         
         <div className="d-flex align-items-center mt-2">
             <button type="submit" className="btn btn-primary align-self-start" disabled={isSubmitting}>

@@ -28,6 +28,7 @@ public class CursoService {
             curso.setDescricao(cursoDetails.getDescricao());
             curso.setDetalhes(cursoDetails.getDetalhes());
             curso.setImagem(cursoDetails.getImagem());
+            curso.setLink(cursoDetails.getLink());
             return repository.save(curso);
         });
     }

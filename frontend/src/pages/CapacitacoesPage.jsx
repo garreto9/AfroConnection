@@ -29,7 +29,7 @@ function CourseCardSkeleton() {
   );
 }
 
-function CourseCard({ imagem, categoria, nome, descricao, detalhes, link }) {
+function CourseCard({ id, imagem, categoria, nome, descricao, detalhes, link }) {
   const imageUrl = imageMap[imagem] || imagem;
 
   const detailsArray = typeof detalhes === 'string' ? detalhes.split(';') : [];
@@ -56,7 +56,7 @@ function CourseCard({ imagem, categoria, nome, descricao, detalhes, link }) {
               detail.trim() && <li key={index}><i className={`bi ${getIconForDetail(detail)} me-2`}></i>{detail.trim()}</li>
             ))}
           </ul>
-          <a href={link || '#'} target="_blank" rel="noopener noreferrer" className="btn btn-primary w-100 mt-auto">Acesse ao Curso</a>
+          <a href={link} target="_blank" rel="noopener noreferrer" className={`btn btn-primary w-100 mt-auto ${!link ? 'disabled' : ''}`} > Acesse ao Curso </a>
         </div>
       </div>
     </div>
